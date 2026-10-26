@@ -3,8 +3,11 @@ import { Form, Input, InputNumber, Select } from "antd";
 
 import { Catalogo } from "./catalogo";
 
-const guaranies = (v: unknown) =>
-  typeof v === "number" ? `₲ ${v.toLocaleString("es-PY", { maximumFractionDigits: 0 })}` : "—";
+// Los montos llegan como texto ("4500000.00") para no perder precisión.
+const guaranies = (v: unknown) => {
+  const n = typeof v === "string" || typeof v === "number" ? Number(v) : NaN;
+  return Number.isFinite(n) ? `₲ ${n.toLocaleString("es-PY", { maximumFractionDigits: 0 })}` : "—";
+};
 
 const Nombre = () => (
   <Form.Item label="Nombre" name="nombre" rules={[{ required: true }]}>
@@ -27,7 +30,11 @@ export const TiposContrato = () => (
     titulo="Tipos de contrato"
     columnas={[
       { campo: "nombre", titulo: "Nombre" },
-      { campo: "duracion_dias", titulo: "Duración (días)", render: (v) => (v as number) ?? "—" },
+      {
+        campo: "duracion_dias",
+        titulo: "Duración (días)",
+        render: (v) => (v as number) ?? "—",
+      },
     ]}
     campos={
       <>

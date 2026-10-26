@@ -4,7 +4,7 @@ Interfaz web del sistema de RRHH: React + TypeScript + Vite, con [Refine](https:
 
 - **Login**: Keycloak con Authorization Code + PKCE. Sin sesión, la app redirige al login de Keycloak; el token se renueva solo.
 - **API**: todo pasa por Kong (`VITE_API_URL`). Cada recurso indica su microservicio en `meta.servicio` y el `dataProvider` arma la URL: `cargos` → `/api/organizacion/cargos`.
-- **Pantallas**: legajos de funcionarios (listado con filtro por estado, alta, edición, detalle y baja lógica) y catálogos de sectores, cargos, tipos de contrato y países.
+- **Pantallas**: legajos de funcionarios (listado con búsqueda y filtro por estado, alta con cargo inicial, edición, detalle con el cargo actual y baja lógica) y catálogos de sectores, cargos, tipos de contrato y países, con búsqueda. El cargo se guarda en el historial de ms-desempeno, no en el legajo.
 
 ## Desarrollo
 

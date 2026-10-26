@@ -1,9 +1,13 @@
 import { DeleteButton, EditButton, List, useModalForm, useTable } from "@refinedev/antd";
 import type { BaseRecord } from "@refinedev/core";
-import { Form, Modal, Space, Table } from "antd";
+import { Form, Input, Modal, Space, Table } from "antd";
 import type { ReactNode } from "react";
 
-export type Columna = { campo: string; titulo: string; render?: (v: unknown) => ReactNode };
+export type Columna = {
+  campo: string;
+  titulo: string;
+  render?: (v: unknown) => ReactNode;
+};
 
 type Props = {
   servicio: string;
@@ -16,12 +20,26 @@ type Props = {
 /** Pantalla genérica para catálogos simples: tabla + alta y edición en un modal. */
 export function Catalogo({ servicio, titulo, columnas, campos }: Props) {
   const meta = { servicio };
-  const { tableProps } = useTable({ meta, syncWithLocation: true });
-  const alta = useModalForm({ action: "create", meta, syncWithLocation: false });
-  const edicion = useModalForm({ action: "edit", meta, syncWithLocation: false });
+  const { tableProps, setFilters } = useTable({ meta, syncWithLocation: true });
+  const alta = useModalForm({
+    action: "create",
+    meta,
+    syncWithLocation: false,
+  });
+  const edicion = useModalForm({
+    action: "edit",
+    meta,
+    syncWithLocation: false,
+  });
 
   return (
     <List title={titulo} createButtonProps={{ onClick: () => alta.show() }}>
+      <Input.Search
+        placeholder="Buscar"
+        allowClear
+        onSearch={(q) => setFilters([{ field: "q", operator: "eq", value: q || undefined }])}
+        style={{ maxWidth: 320, marginBottom: 16 }}
+      />
       <Table {...tableProps} rowKey="id">
         {columnas.map((c) => (
           <Table.Column key={c.campo} dataIndex={c.campo} title={c.titulo} render={c.render} />
