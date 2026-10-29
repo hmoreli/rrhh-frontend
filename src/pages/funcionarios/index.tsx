@@ -30,6 +30,7 @@ type Funcionario = {
   estado_civil?: string | null;
   direccion?: string | null;
   numero_cuenta_bancaria?: string | null;
+  entidad_bancaria_id?: number | null;
 };
 
 type CargoActual = { id: number; cargo_id: number; fecha_ingreso: string };
@@ -170,6 +171,15 @@ function CargoActual({ funcionarioId }: { funcionarioId: number }) {
   );
 }
 
+function EntidadBancaria({ id }: { id: number }) {
+  const { data } = useOne<{ nombre: string }>({
+    resource: "entidades-bancarias",
+    id,
+    meta: { servicio: "organizacion" },
+  });
+  return <> ({data?.data.nombre ?? "…"})</>;
+}
+
 export function DetalleFuncionario() {
   const { query } = useShow<Funcionario>({ meta });
   const f = query.data?.data;
@@ -184,7 +194,7 @@ export function DetalleFuncionario() {
           </Descriptions.Item>
           <Descriptions.Item label="Ingreso">{mostrarFecha(f.fecha_ingreso)}</Descriptions.Item>
           <Descriptions.Item label="Egreso">{mostrarFecha(f.fecha_egreso)}</Descriptions.Item>
-          <Descriptions.Item label="Teléfono">{f.telefono}</Descriptions.Item>
+          <Descriptions.Item label="Teléfono">+{f.telefono}</Descriptions.Item>
           <Descriptions.Item label="Correo">{f.correo_electronico ?? "—"}</Descriptions.Item>
           <Descriptions.Item label="Estado civil">{f.estado_civil ?? "—"}</Descriptions.Item>
           <Descriptions.Item label="Dirección">{f.direccion ?? "—"}</Descriptions.Item>
@@ -193,6 +203,7 @@ export function DetalleFuncionario() {
           </Descriptions.Item>
           <Descriptions.Item label="Cuenta bancaria">
             {f.numero_cuenta_bancaria ?? "—"}
+            {f.entidad_bancaria_id && <EntidadBancaria id={f.entidad_bancaria_id} />}
           </Descriptions.Item>
         </Descriptions>
       )}

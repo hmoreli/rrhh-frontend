@@ -1,4 +1,9 @@
-import { ErrorComponent, ThemedLayoutV2, ThemedSiderV2, useNotificationProvider } from "@refinedev/antd";
+import {
+  ErrorComponent,
+  ThemedLayoutV2,
+  ThemedSiderV2,
+  useNotificationProvider,
+} from "@refinedev/antd";
 import "@refinedev/antd/dist/reset.css";
 import { Authenticated, Refine } from "@refinedev/core";
 import routerProvider, { NavigateToResource } from "@refinedev/react-router";
@@ -9,7 +14,16 @@ import { BrowserRouter, Outlet, Route, Routes } from "react-router";
 import { authProvider } from "./authProvider";
 import { dataProvider } from "./dataProvider";
 import { i18nProvider } from "./i18n";
-import { Cargos, Paises, Sectores, TiposContrato } from "./pages/catalogos";
+import {
+  Barrios,
+  Cargos,
+  Ciudades,
+  Departamentos,
+  EntidadesBancarias,
+  Paises,
+  Sectores,
+  TiposContrato,
+} from "./pages/catalogos";
 import {
   AltaFuncionario,
   DetalleFuncionario,
@@ -32,6 +46,10 @@ const recursos = [
     ["cargos", "Cargos"],
     ["tipos-contrato", "Tipos de contrato"],
     ["paises", "Países"],
+    ["departamentos", "Departamentos"],
+    ["ciudades", "Ciudades"],
+    ["barrios", "Barrios"],
+    ["entidades-bancarias", "Entidades bancarias"],
   ].map(([name, label]) => ({
     name,
     list: `/catalogos/${name}`,
@@ -75,6 +93,10 @@ export default function App() {
                   <Route path="cargos" element={<Cargos />} />
                   <Route path="tipos-contrato" element={<TiposContrato />} />
                   <Route path="paises" element={<Paises />} />
+                  <Route path="departamentos" element={<Departamentos />} />
+                  <Route path="ciudades" element={<Ciudades />} />
+                  <Route path="barrios" element={<Barrios />} />
+                  <Route path="entidades-bancarias" element={<EntidadesBancarias />} />
                 </Route>
                 <Route path="*" element={<ErrorComponent />} />
               </Route>
