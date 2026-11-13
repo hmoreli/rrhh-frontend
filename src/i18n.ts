@@ -37,7 +37,9 @@ const textos: Record<string, string> = {
 
 export const i18nProvider: I18nProvider = {
   translate: (clave, opciones, porDefecto) => {
-    const texto = textos[clave] ?? porDefecto ?? clave;
+    // Refine también llama translate(clave, textoPorDefecto), con el texto en el 2.º argumento.
+    const defecto = typeof opciones === "string" ? opciones : porDefecto;
+    const texto = textos[clave] ?? defecto ?? clave;
     if (!opciones || typeof opciones !== "object") return texto;
     return texto.replace(/\{\{(\w+)\}\}/g, (_, k) => String((opciones as Record<string, unknown>)[k] ?? ""));
   },

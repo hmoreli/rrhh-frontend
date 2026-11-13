@@ -1,7 +1,7 @@
 import { useSelect } from "@refinedev/antd";
-import { useOne } from "@refinedev/core";
-import { Form, Input, InputNumber, Select, Switch, Tag } from "antd";
+import { Form, Input, InputNumber, Radio, Select, Switch, Tag } from "antd";
 
+import { NombreDe } from "../../componentes/nombreDe";
 import { Catalogo } from "./catalogo";
 
 // Los montos llegan como texto ("4500000.00") para no perder precisión.
@@ -116,17 +116,6 @@ export const Cargos = () => (
   />
 );
 
-/** Muestra el nombre de un registro padre (país de un departamento, etc.). */
-function NombreDe({ recurso, id }: { recurso: string; id: unknown }) {
-  const { data } = useOne<{ nombre: string }>({
-    resource: recurso,
-    id: id as number,
-    meta: { servicio: "organizacion" },
-    queryOptions: { enabled: id != null },
-  });
-  return <>{id == null ? "—" : (data?.data.nombre ?? "…")}</>;
-}
-
 function SelectPadre({
   recurso,
   campo,
@@ -155,7 +144,11 @@ const hijoDe = (titulo: string, recurso: string, campo: string, etiqueta: string
     titulo={titulo}
     columnas={[
       { campo: "nombre", titulo: "Nombre" },
-      { campo, titulo: etiqueta, render: (v) => <NombreDe recurso={recurso} id={v} /> },
+      {
+        campo,
+        titulo: etiqueta,
+        render: (v) => <NombreDe recurso={recurso} servicio="organizacion" id={v} />,
+      },
     ]}
     campos={
       <>
@@ -190,5 +183,111 @@ export const EntidadesBancarias = () => (
         </Form.Item>
       </>
     }
+  />
+);
+
+const Descripcion = () => (
+  <Form.Item label="Descripción" name="descripcion" rules={[{ required: true }]}>
+    <Input maxLength={100} />
+  </Form.Item>
+);
+
+export const TiposSancion = () => (
+  <Catalogo
+    servicio="desempeno"
+    titulo="Tipos de sanción"
+    columnas={[{ campo: "descripcion", titulo: "Descripción" }]}
+    campos={<Descripcion />}
+  />
+);
+
+const siNo = (v: unknown) => (v ? "Sí" : "No");
+
+export const Documentos = () => (
+  <Catalogo
+    servicio="documentacion"
+    titulo="Documentos"
+    sinBorrar
+    columnas={[
+      { campo: "descripcion", titulo: "Descripción" },
+      {
+        campo: "tipo",
+        titulo: "Tipo",
+        render: (v) =>
+          v === "obligatoria" ? <Tag color="red">obligatorio</Tag> : <Tag>opcional</Tag>,
+      },
+      {
+        campo: "tiempo_presentacion",
+        titulo: "Plazo (días)",
+        render: (v) => (v as number) ?? "—",
+      },
+      { campo: "tiene_vencimiento", titulo: "Vence", render: siNo },
+    ]}
+    campos={
+      <>
+        <Descripcion />
+        <Form.Item label="Tipo" name="tipo" rules={[{ required: true }]} initialValue="obligatoria">
+          <Radio.Group
+            options={[
+              { value: "obligatoria", label: "Obligatorio" },
+              { value: "opcional", label: "Opcional" },
+            ]}
+          />
+        </Form.Item>
+        <Form.Item
+          label="Tiempo de presentación (días)"
+          name="tiempo_presentacion"
+          tooltip="Días que tiene el funcionario para presentarlo desde su ingreso"
+        >
+          <InputNumber min={0} style={{ width: "100%" }} />
+        </Form.Item>
+        <Form.Item
+          label="Tiene vencimiento"
+          name="tiene_vencimiento"
+          rules={[{ required: true }]}
+          initialValue={false}
+        >
+          <Radio.Group
+            options={[
+              { value: true, label: "Sí" },
+              { value: false, label: "No" },
+            ]}
+          />
+        </Form.Item>
+      </>
+    }
+  />
+);
+
+function CamposInstitucion() {
+  const { selectProps } = useSelect({
+    resource: "paises",
+    meta: { servicio: "organizacion" },
+    optionLabel: "nombre",
+    pagination: { pageSize: 200 },
+  });
+  return (
+    <>
+      <Nombre />
+      <Form.Item label="País" name="pais_id">
+        <Select {...selectProps} allowClear />
+      </Form.Item>
+    </>
+  );
+}
+
+export const InstitucionesEducativas = () => (
+  <Catalogo
+    servicio="formacion"
+    titulo="Instituciones educativas"
+    columnas={[
+      { campo: "nombre", titulo: "Nombre" },
+      {
+        campo: "pais_id",
+        titulo: "País",
+        render: (v) => <NombreDe recurso="paises" servicio="organizacion" id={v} />,
+      },
+    ]}
+    campos={<CamposInstitucion />}
   />
 );

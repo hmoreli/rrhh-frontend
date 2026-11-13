@@ -19,10 +19,13 @@ import {
   Cargos,
   Ciudades,
   Departamentos,
+  Documentos,
   EntidadesBancarias,
+  InstitucionesEducativas,
   Paises,
   Sectores,
   TiposContrato,
+  TiposSancion,
 } from "./pages/catalogos";
 import {
   AltaFuncionario,
@@ -50,11 +53,23 @@ const recursos = [
     ["ciudades", "Ciudades"],
     ["barrios", "Barrios"],
     ["entidades-bancarias", "Entidades bancarias"],
-  ].map(([name, label]) => ({
+    ["tipos-sancion", "Tipos de sanción", "desempeno"],
+    ["documentos", "Documentos", "documentacion"],
+    ["instituciones-educativas", "Instituciones educativas", "formacion"],
+  ].map(([name, label, servicio = "organizacion"]) => ({
     name,
     list: `/catalogos/${name}`,
-    meta: { servicio: "organizacion", label, parent: "catalogos", canDelete: true },
+    meta: { servicio, label, parent: "catalogos", canDelete: name !== "documentos" },
   })),
+  // Datos del legajo en otros servicios: se ven dentro del detalle del funcionario.
+  ...[
+    ["hijos", "funcionarios"],
+    ["historicos-cargo", "desempeno"],
+    ["sanciones", "desempeno"],
+    ["documentos-funcionarios", "documentacion"],
+    ["antecedentes-academicos", "formacion"],
+    ["antecedentes-laborales", "formacion"],
+  ].map(([name, servicio]) => ({ name, meta: { servicio, hide: true, canDelete: true } })),
 ];
 
 export default function App() {
@@ -97,6 +112,12 @@ export default function App() {
                   <Route path="ciudades" element={<Ciudades />} />
                   <Route path="barrios" element={<Barrios />} />
                   <Route path="entidades-bancarias" element={<EntidadesBancarias />} />
+                  <Route path="tipos-sancion" element={<TiposSancion />} />
+                  <Route path="documentos" element={<Documentos />} />
+                  <Route
+                    path="instituciones-educativas"
+                    element={<InstitucionesEducativas />}
+                  />
                 </Route>
                 <Route path="*" element={<ErrorComponent />} />
               </Route>

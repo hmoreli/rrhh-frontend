@@ -15,10 +15,12 @@ type Props = {
   columnas: Columna[];
   /** Campos del formulario de alta y edición (Form.Item). */
   campos: ReactNode;
+  /** Para catálogos que el backend no deja borrar (p. ej. documentos). */
+  sinBorrar?: boolean;
 };
 
 /** Pantalla genérica para catálogos simples: tabla + alta y edición en un modal. */
-export function Catalogo({ servicio, titulo, columnas, campos }: Props) {
+export function Catalogo({ servicio, titulo, columnas, campos, sinBorrar = false }: Props) {
   const meta = { servicio };
   const { tableProps, setFilters } = useTable({ meta, syncWithLocation: true });
   const alta = useModalForm({
@@ -49,7 +51,9 @@ export function Catalogo({ servicio, titulo, columnas, campos }: Props) {
           render={(_, r) => (
             <Space>
               <EditButton hideText size="small" onClick={() => edicion.show(r.id)} />
-              <DeleteButton hideText size="small" recordItemId={r.id} meta={meta} />
+              {!sinBorrar && (
+                <DeleteButton hideText size="small" recordItemId={r.id} meta={meta} />
+              )}
             </Space>
           )}
         />
