@@ -16,6 +16,7 @@ import { useRef } from "react";
 
 import { mostrarFecha } from "../../fechas";
 import { FormularioFuncionario } from "./formulario";
+import { PestaniasLegajo } from "./legajo";
 
 type Funcionario = {
   id: number;
@@ -207,6 +208,7 @@ export function DetalleFuncionario() {
           </Descriptions.Item>
         </Descriptions>
       )}
+      {f && <PestaniasLegajo funcionarioId={f.id} />}
     </Show>
   );
 }
